@@ -137,7 +137,6 @@ def t_error(t):
 # Construyendo el analizador léxico
 import ply.lex as lex
 lexer = lex.lex()
-lexer.errores_lexicos = 0
 
 
 # Asociación de operadores y precedencia

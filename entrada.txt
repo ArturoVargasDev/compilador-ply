@@ -40,6 +40,8 @@ numero b;
 //Se asigna valor de 12 a b y valor de 13 a c
 b=12;
 c=13;
+
+dffd
 /**
  * Se evalua si el valor de la variable a es 
  * mayor que 10, si el b es mayor que 11 y si
@@ -47,7 +49,7 @@ c=13;
  **/
 If(a>10){
 	imprimir("a es mayor que 10.");
-	if(b>11){
+	if(b>=11){
 		imprimir("a es mayor que 10 y b es mayor que 11.");
 		if(c>12){
 			imprimir("a es mayor que 10, b es mayor que 11 y c es mayor que 12.");

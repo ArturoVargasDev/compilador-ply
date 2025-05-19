@@ -66,25 +66,18 @@ def t_ENTERO(t):
 
 def t_ID(t):
      r'[a-zA-Z_][a-zA-Z_0-9]*'
-     t.type = reservadas.get(t.value.lower(),'ID')   
+     t.type = reservadas.get(t.value.lower(),'ID')    # Check for reserved words
      return t
 
 def t_CADENA(t):
-    r'\"([^\\\n]|(\\.))*?\"'
-    t.value = t.value[1:-1]
-    return t
+    r'\".*?\"'
+    t.value = t.value[1:-1] # remuevo las comillas
+    return t 
 
+# Comentario de múltiples líneas /* .. */
 def t_COMENTARIO_MULTILINEA(t):
     r'/\*(.|\n)*?\*/'
     t.lexer.lineno += t.value.count('\n')
-    return None
-
-def t_COMENTARIO_MULTILINEA_NO_CERRADO(t):
-    r'/\*(.|\n)*'
-    print(f"❌ Error: comentario multilínea no cerrado detectado desde línea {t.lineno}")
-    lexer.error_detected = True
-    t.lexer.skip(len(t.value))
-
 
 # Comentario simple // ...
 def t_COMENTARIO_SIMPLE(t):
@@ -99,24 +92,15 @@ def t_newline(t):
     t.lexer.lineno += t.value.count("\n")
     
 def t_error(t):
-    lexer.error_detected = True  
-    if t.value.startswith('"'):
-        print(f"❌ Error: cadena no cerrada en línea {t.lineno}, columna {t.lexpos - t.lexer.lexdata.rfind('\\n', 0, t.lexpos)}")
-        salto = t.value.find('\n')
-        if salto == -1:
-            t.lexer.skip(len(t.value))
-        else:
-            t.lexer.skip(salto)
-    else:
-        print(f"❌ Illegal character '{t.value[0]}' en línea {t.lineno}")
-        t.lexer.skip(1)
+    print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}")
+    t.lexer.skip(1)
 
-
+# Construyendo el analizador léxico
 import ply.lex as lex
-
 lexer = lex.lex()
-lexer.error_detected = False
 
+
+# Asociación de operadores y precedencia
 precedence = (
     ('left','CONCAT'),
     ('left','MAS','MENOS'),
@@ -124,8 +108,10 @@ precedence = (
     ('right','UMENOS'),
     )
 
-# from expresiones import *
-# from instrucciones import *
+# Definición de la gramática
+
+#from expresiones import *
+#from instrucciones import *
 
 
 def p_init(t) :

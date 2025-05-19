@@ -1,0 +1,33 @@
+// Archivo de prueba para errores léxicos clásicos y adicionales
+
+numero x;            // Declaración correcta
+
+numero y;     // Contenido inesperado después de ';'
+ertyuiolkjhgfre456yuj eyujmnbvcswertyhnbvcde4r56yujnbvder5t6yujnbvfr5t67
+imprimir("Hola);     // Cadena sin cerrar
+
+mientras (x < 10) {  // Bloque correcto
+    x = x + 1;
+}
+
+/* Comentario multilínea
+sin cerrar
+
+z = 20 $ 30;        // Carácter ilegal $
+
+imprimir("Fin");    // Línea final correcta
+
+id_invalido@ = 5;   // Carácter ilegal '@'
+
+numero 123abc;       // ID inválido (números no pueden empezar IDs)
+
+imprimir("Texto con \n salto y \t tabulación"); // Cadena con escapes válidos
+
+imprimir("Otra cadena sin cerrar // falta comilla
+
+/* Comentario multilínea válido */
+numero validVar;     
+
+# Esto es un comentario inválido en este lenguaje (carácter '#')
+
+numero valid2;

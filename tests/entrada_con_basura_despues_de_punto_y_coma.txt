@@ -1,0 +1,2 @@
+numero x; basura
+imprimir("Hola");  no deberia ir aqui

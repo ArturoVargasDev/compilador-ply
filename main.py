@@ -2,7 +2,6 @@ from gramatica import lexer
 import json
 import re  
 
-# Función auxiliar
 
 def calcular_columna(entrada, token):
     ultima_nueva_linea = entrada.rfind('\n', 0, token.lexpos)

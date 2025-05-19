@@ -1,4 +1,5 @@
-__pychache__
+__pycache__
 parsetab.py 
 tokens.json
 parser.out
+.gitignore

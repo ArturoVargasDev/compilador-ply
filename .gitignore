@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 __pycache__
+=======
+__pychache__
+>>>>>>> 45ee914ed0a0ab1b27c3b03b3de15572ae6248de
 parsetab.py 
 tokens.json
 parser.out

@@ -1,0 +1,13 @@
+// Se declara y usa correctamente
+numero a;
+a = 0;
+imprimir("Inicio");
+
+// Error esperado: variable no declarada
+pedo
+
+// Error: cadena sin cerrar
+imprimir("hola);
+
+// Error: operador inválido
+a => 5;

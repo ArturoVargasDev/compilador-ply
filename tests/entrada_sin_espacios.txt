@@ -1,1 +1,0 @@
-numero x;y=5+3;imprimir("Hola")z=7;

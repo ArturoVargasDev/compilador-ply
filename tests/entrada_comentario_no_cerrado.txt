@@ -1,3 +1,0 @@
-/* Este comentario
-no se cierra
-numero x;

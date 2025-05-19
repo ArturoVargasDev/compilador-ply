@@ -1,2 +1,0 @@
-// Comentario simple
-numero x; /* comentario válido */

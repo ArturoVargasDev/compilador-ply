@@ -1,3 +1,0 @@
-numero x;
-x = 10;
-imprimir("Hola mundo");

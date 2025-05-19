@@ -80,26 +80,22 @@ def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     global _last_token_was_numero, variables_declaradas
     col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
-
     valor_minuscula = t.value.lower()
 
     if valor_minuscula in reservadas:
         t.type = reservadas[valor_minuscula]
-        _last_token_was_numero = (valor_minuscula == 'numero')  # para detectar declaración
+        _last_token_was_numero = (valor_minuscula == 'numero')
+        return t
+    elif _last_token_was_numero:
+        variables_declaradas.add(t.value)
+        _last_token_was_numero = False
+        return t
+    elif t.value in variables_declaradas:
+        return t
     else:
-        if _last_token_was_numero:
-            # justo después de 'numero', se está declarando
-            variables_declaradas.add(t.value)
-            t.type = 'ID'
-            _last_token_was_numero = False
-        else:
-            if t.value in variables_declaradas:
-                t.type = 'ID'
-            else:
-                print(f"❌ Error léxico: identificador '{t.value[0]}' en la línea {t.lineno}, columna {col}")
-                t.lexer.skip(len(t.value))
-                return
-    return t
+        print(f"❌ Error léxico: identificador no declarado '{t.value}' en la línea {t.lineno}, columna {col}")
+        return None  # No lo retorna al parser
+
 
 def t_CADENA_NO_CERRADA(t):
     r'\"[^\"]*(\n|$)'  # Comilla que nunca se cierra hasta salto de línea o fin de archivo

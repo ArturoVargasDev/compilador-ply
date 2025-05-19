@@ -1,4 +1,8 @@
 
+variables_declaradas = set()
+_last_token_was_numero = False
+
+
 reservadas = {
     'numero' : 'NUMERO',
     'imprimir' : 'IMPRIMIR',
@@ -26,7 +30,7 @@ tokens  = [
     'DECIMAL',
     'ENTERO',
     'CADENA',
-    'ID'
+    'ID',
 ] + list(reservadas.values())
 
 # Tokens
@@ -65,9 +69,30 @@ def t_ENTERO(t):
     return t
 
 def t_ID(t):
-     r'[a-zA-Z_][a-zA-Z_0-9]*'
-     t.type = reservadas.get(t.value.lower(),'ID')    # Check for reserved words
-     return t
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    global _last_token_was_numero, variables_declaradas
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+
+    valor_minuscula = t.value.lower()
+
+    if valor_minuscula in reservadas:
+        t.type = reservadas[valor_minuscula]
+        _last_token_was_numero = (valor_minuscula == 'numero')  # para detectar declaración
+    else:
+        if _last_token_was_numero:
+            # justo después de 'numero', se está declarando
+            variables_declaradas.add(t.value)
+            t.type = 'ID'
+            _last_token_was_numero = False
+        else:
+            if t.value in variables_declaradas:
+                t.type = 'ID'
+            else:
+                print(f"❌ Error léxico: identificador '{t.value[0]}' en la línea {t.lineno}, columna {col}")
+                t.lexer.skip(len(t.value))
+                return
+    return t
+
 
 def t_CADENA(t):
     r'\".*?\"'
@@ -92,7 +117,8 @@ def t_newline(t):
     t.lexer.lineno += t.value.count("\n")
     
 def t_error(t):
-    print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}")
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}, columna {col}")
     t.lexer.skip(1)
 
 # Construyendo el analizador léxico

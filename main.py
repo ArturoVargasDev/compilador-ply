@@ -1,7 +1,11 @@
-# main.py
-
-from gramatica import lexer  
+from gramatica import lexer
 import sys
+
+def obtener_columna(input_text, token):
+    ultima_linea = input_text.rfind('\n', 0, token.lexpos)
+    if ultima_linea < 0:
+        ultima_linea = -1
+    return token.lexpos - ultima_linea
 
 def analizar_archivo(nombre_archivo):
     try:
@@ -11,20 +15,18 @@ def analizar_archivo(nombre_archivo):
         print(f"❌ No se encontró el archivo '{nombre_archivo}'")
         return
 
-    lexer.input(codigo) 
-    errores = False
-
+    lexer.input(codigo)
+    lexer.lexdata = codigo  # Necesario para calcular columna
     print("=== TOKENS ENCONTRADOS ===")
+    
     while True:
         token = lexer.token()
         if not token:
             break
-        print(f"{token.type} -> '{token.value}' (línea {token.lineno})")
+        columna = obtener_columna(codigo, token)
+        print(f"{token.type} -> '{token.value}' (línea {token.lineno}, columna {columna})")
 
-    if errores:
-        print("\n❌ Se encontraron errores léxicos.")
-    else:
-        print("\n✅ Análisis léxico completado sin errores.")
+    print("\n✅ Análisis léxico completado.")
 
 if __name__ == "__main__":
-    analizar_archivo("entrada.txt")
+    analizar_archivo(r"tests\entrada_grande.txt")

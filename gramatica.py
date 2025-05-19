@@ -39,16 +39,24 @@ t_LLAVIZQ   = r'{'
 t_LLAVDER   = r'}'
 t_PARIZQ    = r'\('
 t_PARDER    = r'\)'
-t_IGUAL     = r'='
 t_MAS       = r'\+'
 t_MENOS     = r'-'
 t_POR       = r'\*'
 t_DIVIDIDO  = r'/'
 t_CONCAT    = r'&'
-t_MENQUE    = r'<'
+t_IGUAL     = r'='
 t_MAYQUE    = r'>'
+t_MENQUE    = r'<'
 t_IGUALQUE  = r'=='
 t_NIGUALQUE = r'!='
+
+
+def t_OPERADOR_INVALIDO(t):
+    r'(=>|=<|==<|!=<|=>=|=<==?)'
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    print(f"❌ Error léxico: operador no válido '{t.value}' en la línea {t.lineno}, columna {col}")
+    t.lexer.skip(len(t.value))
+
 
 def t_DECIMAL(t):
     r'\d+\.\d+'
@@ -93,6 +101,11 @@ def t_ID(t):
                 return
     return t
 
+def t_CADENA_NO_CERRADA(t):
+    r'\"[^\"]*(\n|$)'  # Comilla que nunca se cierra hasta salto de línea o fin de archivo
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    print(f"❌ Error léxico: cadena sin cerrar en la línea {t.lineno}, columna {col}")
+    t.lexer.skip(len(t.value))  # Ignora la cadena completa
 
 def t_CADENA(t):
     r'\".*?\"'
@@ -124,6 +137,7 @@ def t_error(t):
 # Construyendo el analizador léxico
 import ply.lex as lex
 lexer = lex.lex()
+lexer.errores_lexicos = 0
 
 
 # Asociación de operadores y precedencia

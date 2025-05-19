@@ -1,5 +1,3 @@
-numero y;   
+numero a;
 
-imprimir("Hola"@);     
-y=3;
-b=2;
+if(b >= 10){

@@ -1,0 +1,10 @@
+    numero a;
+    a = 5;
+
+    if(a > 3){
+        imprimir("a es mayor que 3");
+    }
+
+    else{
+        imprimir("a es menor o igual que 3");
+    }

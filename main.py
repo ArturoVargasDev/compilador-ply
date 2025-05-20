@@ -1,32 +1,37 @@
-from gramatica import lexer
 import sys
+from lexer import lexer
+from parser import parser, parse
 
-def obtener_columna(input_text, token):
-    ultima_linea = input_text.rfind('\n', 0, token.lexpos)
-    if ultima_linea < 0:
-        ultima_linea = -1
-    return token.lexpos - ultima_linea
-
-def analizar_archivo(nombre_archivo):
+def analizar_codigo(archivo_path):
     try:
-        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
-            codigo = archivo.read()
+        with open(archivo_path, 'r', encoding='utf-8') as f:
+            entrada = f.read()
     except FileNotFoundError:
-        print(f"❌ No se encontró el archivo '{nombre_archivo}'")
+        print(f"❌ No se encontró el archivo '{archivo_path}'")
         return
 
-    lexer.input(codigo)
-    lexer.lexdata = codigo  # Necesario para calcular columna
-    print("=== TOKENS ENCONTRADOS ===")
+    print("🔍 Iniciando análisis léxico y sintáctico...\n")
     
-    while True:
-        token = lexer.token()
-        if not token:
-            break
-        columna = obtener_columna(codigo, token)
-        print(f"{token.type} -> '{token.value}' (línea {token.lineno}, columna {columna})")
+    # Análisis léxico
+    lexer.input(entrada)
+    lexer.lexdata = entrada  # para calcular columnas correctamente
 
-    print("\n✅ Análisis léxico completado.")
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        print(f"{tok.type} -> '{tok.value}' (línea {tok.lineno}, columna {tok.lexpos - entrada.rfind(chr(10), 0, tok.lexpos)})")
+
+    print("\n✅ Análisis léxico finalizado.\n")
+
+    # Análisis sintáctico
+    try:
+        resultado = parse(entrada)
+        if resultado is not None:
+            print("✅ Análisis sintáctico finalizado sin errores.")
+    except Exception as e:
+        print(f"❌ Error sintáctico detectado: {e}")
 
 if __name__ == "__main__":
-    analizar_archivo(r"tests\test-1.txt")
+    archivo = sys.argv[1] if len(sys.argv) > 1 else r"tests\test-1.txt"
+    analizar_codigo(archivo)

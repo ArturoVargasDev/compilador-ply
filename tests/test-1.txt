@@ -1,13 +1,20 @@
-// Se declara y usa correctamente
-numero a;
-a = 0;
-imprimir("Inicio");
+numero a
+a = 5
 
-// Error esperado: variable no declarada
-pedo
+if(a > 3) {
+    imprimir("a es mayor que 3");
+} else {
+    imprimir("a es menor o igual que 3");
+}
 
-// Error: cadena sin cerrar
-imprimir("hola);
+numero b;
+b = ;
 
-// Error: operador inválido
-a => 5;
+if (a > 2 {
+    imprimir("Error: falta paréntesis de cierre");
+}
+
+imprimir("Cadena sin cerrar);
+
+numero c;
+c = 10

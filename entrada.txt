@@ -20,7 +20,7 @@ mientras(a<4+c){
 	a=a+1;
 	numero b;
 	b=0;
-	pedo
+	
 	mientras(b<4+c){
 		b=b+1;
 		imprimir(a & " * " & b & " = " & a * b);
@@ -53,6 +53,6 @@ If(a>10){
 			imprimir("a es mayor que 10, b es mayor que 11 y c es mayor que 12.");
 		}
 	}
-}else{
+} else { 
 	imprimir("a es menor o igual que 10.");
 }

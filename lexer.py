@@ -2,7 +2,6 @@
 variables_declaradas = set()
 _last_token_was_numero = False
 
-
 reservadas = {
     'numero' : 'NUMERO',
     'imprimir' : 'IMPRIMIR',
@@ -33,7 +32,6 @@ tokens  = [
     'ID',
 ] + list(reservadas.values())
 
-# Tokens
 t_PTCOMA    = r';'
 t_LLAVIZQ   = r'{'
 t_LLAVDER   = r'}'
@@ -50,13 +48,11 @@ t_MENQUE    = r'<'
 t_IGUALQUE  = r'=='
 t_NIGUALQUE = r'!='
 
-
 def t_OPERADOR_INVALIDO(t):
     r'(=>|=<|==<|!=<|=>=|=<==?)'
     col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
     print(f"❌ Error léxico: operador no válido '{t.value}' en la línea {t.lineno}, columna {col}")
     t.lexer.skip(len(t.value))
-
 
 def t_DECIMAL(t):
     r'\d+\.\d+'
@@ -136,7 +132,6 @@ def t_error(t):
     else:
         print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}, columna {col}")
         t.lexer.skip(1)
-
 
 import ply.lex as lex
 lexer = lex.lex()

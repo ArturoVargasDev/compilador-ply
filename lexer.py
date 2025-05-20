@@ -86,39 +86,36 @@ def t_ID(t):
         t.type = reservadas[valor_minuscula]
         _last_token_was_numero = (valor_minuscula == 'numero')
         return t
+
     elif _last_token_was_numero:
         variables_declaradas.add(t.value)
         _last_token_was_numero = False
         return t
+
     elif t.value in variables_declaradas:
         return t
+
     else:
-        print(f"❌ Error léxico: identificador no declarado '{t.value}' en la línea {t.lineno}, columna {col}")
-        return None  # No lo retorna al parser
-
-
-def t_CADENA_NO_CERRADA(t):
-    r'\"[^\"]*(\n|$)'  # Comilla que nunca se cierra hasta salto de línea o fin de archivo
-    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
-    print(f"❌ Error léxico: cadena sin cerrar en la línea {t.lineno}, columna {col}")
-    t.lexer.skip(len(t.value))  # Ignora la cadena completa
+        posibles = [pal for pal in reservadas if sum(a == b for a, b in zip(pal, valor_minuscula)) >= 3]
+        if posibles:
+            print(f"❌ Error léxico: palabra clave inválida '{t.value}' en la línea {t.lineno}, columna {col}")
+        else:
+            print(f"❌ Error léxico: identificador no declarado '{t.value}' en la línea {t.lineno}, columna {col}")
+        return None
 
 def t_CADENA(t):
-    r'\".*?\"'
-    t.value = t.value[1:-1] # remuevo las comillas
-    return t 
+    r'"([^"\n])*"'  
+    t.value = t.value[1:-1]
+    return t
 
-# Comentario de múltiples líneas /* .. */
 def t_COMENTARIO_MULTILINEA(t):
     r'/\*(.|\n)*?\*/'
     t.lexer.lineno += t.value.count('\n')
 
-# Comentario simple // ...
 def t_COMENTARIO_SIMPLE(t):
     r'//.*\n'
     t.lexer.lineno += 1
 
-# Caracteres ignorados
 t_ignore = " \t"
 
 def t_newline(t):
@@ -127,9 +124,19 @@ def t_newline(t):
     
 def t_error(t):
     col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
-    print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}, columna {col}")
-    t.lexer.skip(1)
 
-# Construyendo el analizador léxico
+    if t.value.startswith('"'):
+        print(f"❌ Error léxico: cadena sin cerrar en la línea {t.lineno}, columna {col}")
+
+        fin = t.lexer.lexdata.find('\n', t.lexpos)
+        if fin == -1:
+            t.lexer.skip(len(t.lexer.lexdata) - t.lexpos)
+        else:
+            t.lexer.skip(fin - t.lexpos)
+    else:
+        print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}, columna {col}")
+        t.lexer.skip(1)
+
+
 import ply.lex as lex
 lexer = lex.lex()

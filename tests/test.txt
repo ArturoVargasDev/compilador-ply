@@ -1,0 +1,8 @@
+numero a;
+a = 5;
+
+imprimir("Prueba"); basura
+
+imprmmm("Prueba2");
+
+

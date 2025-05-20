@@ -15,6 +15,7 @@ def analizar_archivo(nombre_archivo):
         print(f"❌ No se encontró el archivo '{nombre_archivo}'")
         return
 
+    lexer.lineno = 1  # Resetea el contador de líneas
     lexer.input(codigo)
     lexer.lexdata = codigo  # Necesario para calcular columna
     print("=== TOKENS ENCONTRADOS ===")
@@ -29,4 +30,4 @@ def analizar_archivo(nombre_archivo):
     print("\n✅ Análisis léxico completado.")
 
 if __name__ == "__main__":
-    analizar_archivo(r"tests\test-1.txt")
+    analizar_archivo(r"tests/test.txt")

@@ -33,5 +33,5 @@ def analizar_codigo(archivo_path):
         print(f"❌ Error sintáctico detectado: {e}")
 
 if __name__ == "__main__":
-    archivo = sys.argv[1] if len(sys.argv) > 1 else r"tests\test-1.txt"
+    archivo = sys.argv[1] if len(sys.argv) > 1 else r"tests/test.txt"
     analizar_codigo(archivo)

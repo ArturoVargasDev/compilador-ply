@@ -31,4 +31,4 @@ def analizar_archivo(nombre_archivo):
     print("\n✅ Análisis léxico completado.")
 
 if __name__ == "__main__":
-    analizar_archivo(r"tests/test.txt")
+    analizar_archivo(r"compilador-ply\entrada.txt")

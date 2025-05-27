@@ -1,6 +1,10 @@
+import sys
 
 variables_declaradas = set()
 _last_token_was_numero = False
+
+error_lexico_ocurrido = False 
+pila_delimitadores = []  
 
 reservadas = {
     'numero' : 'NUMERO',
@@ -33,10 +37,6 @@ tokens  = [
 ] + list(reservadas.values())
 
 t_PTCOMA    = r';'
-t_LLAVIZQ   = r'{'
-t_LLAVDER   = r'}'
-t_PARIZQ    = r'\('
-t_PARDER    = r'\)'
 t_MAS       = r'\+'
 t_MENOS     = r'-'
 t_POR       = r'\*'
@@ -47,6 +47,38 @@ t_MAYQUE    = r'>'
 t_MENQUE    = r'<'
 t_IGUALQUE  = r'=='
 t_NIGUALQUE = r'!='
+
+def t_PARIZQ(t):
+    r'\('
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    pila_delimitadores.append(('(', t.lineno, col))
+    return t
+
+def t_PARDER(t):
+    r'\)'
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    if pila_delimitadores and pila_delimitadores[-1][0] == '(':
+        pila_delimitadores.pop()
+        return t
+    else:
+        print(f"❌ Error léxico: paréntesis de cierre sin apertura en la línea {t.lineno}, columna {col}")
+        sys.exit(1)
+
+def t_LLAVIZQ(t):
+    r'\{'
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    pila_delimitadores.append(('{', t.lineno, col))
+    return t
+
+def t_LLAVDER(t):
+    r'\}'
+    col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    if pila_delimitadores and pila_delimitadores[-1][0] == '{':
+        pila_delimitadores.pop()
+        return t
+    else:
+        print(f"❌ Error léxico: llave de cierre sin apertura en la línea {t.lineno}, columna {col}")
+        sys.exit(1)
 
 def t_OPERADOR_INVALIDO(t):
     r'(=>|=<|==<|!=<|=>=|=<==?)'
@@ -100,9 +132,15 @@ def t_ID(t):
         return None
 
 def t_CADENA(t):
-    r'"([^"\n])*"'  
-    t.value = t.value[1:-1]
-    return t
+    r'"([^"\n])*"?'
+    if t.value.endswith('"'):
+        t.value = t.value[1:-1]
+        return t
+    else:
+        col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+        print(f"❌ Error léxico: cadena sin cerrar en la línea {t.lineno}, columna {col}")
+        sys.exit(1)
+
 
 def t_COMENTARIO_MULTILINEA(t):
     r'/\*(.|\n)*?\*/'
@@ -120,18 +158,16 @@ def t_newline(t):
     
 def t_error(t):
     col = t.lexpos - t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}, columna {col}")
+    sys.exit(1)
 
-    if t.value.startswith('"'):
-        print(f"❌ Error léxico: cadena sin cerrar en la línea {t.lineno}, columna {col}")
-
-        fin = t.lexer.lexdata.find('\n', t.lexpos)
-        if fin == -1:
-            t.lexer.skip(len(t.lexer.lexdata) - t.lexpos)
-        else:
-            t.lexer.skip(fin - t.lexpos)
-    else:
-        print(f"❌ Error léxico: carácter ilegal '{t.value[0]}' en la línea {t.lineno}, columna {col}")
-        t.lexer.skip(1)
 
 import ply.lex as lex
 lexer = lex.lex()
+
+def verificar_delimitadores_final():
+    if pila_delimitadores:
+        simbolo, linea, col = pila_delimitadores[0]
+        tipo = "paréntesis" if simbolo == '(' else "llave"
+        print(f"❌ Error léxico: falta cierre de {tipo} abierto en línea {linea}, columna {col}")
+        sys.exit(1)

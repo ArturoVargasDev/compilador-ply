@@ -28,6 +28,9 @@ def analizar_archivo(nombre_archivo):
         columna = obtener_columna(codigo, token)
         print(f"{token.type} -> '{token.value}' (línea {token.lineno}, columna {columna})")
 
+    from lexer import verificar_delimitadores_final
+    verificar_delimitadores_final()
+    
     print("\n✅ Análisis léxico completado.")
 
 if __name__ == "__main__":
